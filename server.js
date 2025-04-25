@@ -22,7 +22,10 @@ const PORT = process.env.PORT || 3000;
 // Check if public directory exists and serve static files if it does
 const publicPath = path.join(__dirname, 'public');
 app.use(express.static(publicPath));  // Serve static files from the 'public' folder
+ HEAD
 app.use(express.static(path.join(__dirname, 'public')));
+
+ e76153c5bdf93bf533d763a428ac03796a240ed0
 
 // Mock database (replace with MongoDB/PostgreSQL later)
 const users = [];
