@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VideoConnect | Live Video Chat</title>
+  <!-- Use local CSS or CDN fallback -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Base styles */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f5f5;
+      color: #333;
+    }
+    
+    /* Add all your existing styles here */
+    .auth-container { /* ... */ }
+    .auth-tabs { /* ... */ }
+    /* Keep all your existing styles */
+    
+    /* Add these new styles for better error handling */
+    .error-message {
+      color: #ff2d55;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+    
+    .input-error {
+      border-color: #ff2d55 !important;
+    }
+  </style>
+</head>
+<body>
+  <!-- Your existing HTML structure remains the same -->
+  <!-- ... -->
+
+  <script>
+    // Enhanced auth handling
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Check auth status
+      try {
+        const response = await fetch('/api/auth/me', {
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!response.ok) throw new Error('Auth check failed');
+        
+        const { user } = await response.json();
+        
+        if (user) {
+          // User is logged in
+          document.getElementById('heroSection').style.display = 'none';
+          document.getElementById('authSection').style.display = 'none';
+          document.getElementById('loggedInSection').style.display = 'block';
+          
+          // Update UI based on user role
+          if (user.isHost) {
+            document.getElementById('hostAction').style.display = 'block';
+          }
+        }
+      } catch (err) {
+        console.error('Auth check:', err);
+      }
+
+      // Form validation
+      const validateForm = (formId) => {
+        let isValid = true;
+        const form = document.getElementById(formId);
+        const inputs = form.querySelectorAll('input[required]');
+        
+        inputs.forEach(input => {
+          const errorElement = document.createElement('div');
+          errorElement.className = 'error-message';
+          input.parentNode.appendChild(errorElement);
+          
+          if (!input.value.trim()) {
+            input.classList.add('input-error');
+            errorElement.textContent = 'This field is required';
+            errorElement.style.display = 'block';
+            isValid = false;
+          } else {
+            input.classList.remove('input-error');
+            errorElement.style.display = 'none';
+          }
+        });
+        
+        return isValid;
+      };
+
+      // Login handler
+      document.getElementById('loginBtn')?.addEventListener('click', async () => {
+        if (!validateForm('loginForm')) return;
+        
+        try {
+          const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              username: document.getElementById('loginUsername').value,
+              password: document.getElementById('loginPassword').value
+            })
+          });
+          
+          if (response.ok) {
+            window.location.reload();
+          } else {
+            throw new Error('Login failed');
+          }
+        } catch (err) {
+          alert('Login failed. Please try again.');
+        }
+      });
+
+      // Register handler
+      document.getElementById('registerBtn')?.addEventListener('click', async () => {
+        if (!validateForm('registerForm')) return;
+        
+        try {
+          const response = await fetch('/api/auth/register', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              username: document.getElementById('regUsername').value,
+              password: document.getElementById('regPassword').value,
+              isHost: document.getElementById('isHostCheckbox').checked
+            })
+          });
+          
+          if (response.ok) {
+            window.location.reload();
+          } else {
+            throw new Error('Registration failed');
+          }
+        } catch (err) {
+          alert('Registration failed. Please try again.');
+        }
+      });
+    });
+
+    // Keep your existing tab switching and UI toggle code
+    // ...
+  </script>
+</body>
+</html>
