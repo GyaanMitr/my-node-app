@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Host Room | VideoConnect</title>
+  <link rel="stylesheet" href="css/host.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="host-container">
+    <!-- Header -->
+    <header class="host-header">
+      <a href="/" class="back-button"><i class="fas fa-arrow-left"></i></a>
+      <div class="room-info">
+        <span>Room ID: <span id="roomIdDisplay">---</span></span>
+        <span><i class="fas fa-users"></i> <span id="viewerCount">0</span></span>
+      </div>
+      <div class="host-actions">
+        <button id="endBroadcast" class="btn btn-danger">
+          <i class="fas fa-stop"></i> End Stream
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="host-main">
+      <!-- Video Stream -->
+      <div class="video-container">
+        <video id="localVideo" autoplay muted></video>
+        <div class="video-controls">
+          <button id="toggleVideo"><i class="fas fa-video"></i></button>
+          <button id="toggleMic"><i class="fas fa-microphone"></i></button>
+          <button id="toggleEffects"><i class="fas fa-magic"></i></button>
+        </div>
+      </div>
+
+      <!-- Chat Panel -->
+      <div class="chat-panel">
+        <div class="chat-header">
+          <h3><i class="fas fa-comments"></i> Live Chat</h3>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input">
+          <input type="text" id="messageInput" placeholder="Send a message...">
+          <button id="sendMessage"><i class="fas fa-paper-plane"></i></button>
+        </div>
+      </div>
+
+      <!-- Viewer List -->
+      <div class="viewer-panel">
+        <div class="viewer-header">
+          <h3><i class="fas fa-users"></i> Viewers (<span id="viewerCountSide">0</span>)</h3>
+        </div>
+        <div class="viewer-list" id="viewerList"></div>
+      </div>
+    </main>
+
+    <!-- Gift Panel -->
+    <div class="gift-panel">
+      <h3><i class="fas fa-gifts"></i> Received Gifts</h3>
+      <div class="gifts-container" id="giftsContainer">
+        <!-- Gifts will appear here -->
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/host.js"></script>
+  <script>
+    // Auth check
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const res = await fetch('/api/auth/me', { credentials: 'include' });
+        const { user } = await res.json();
+        
+        if (!user || !user.isHost) {
+          window.location.href = '/';
+          return;
+        }
+
+        // Initialize host stream
+        initializeHostStream(user.username);
+      } catch (err) {
+        window.location.href = '/';
+      }
+    });
+
+    async function initializeHostStream(username) {
+      // Get user media
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true
+      });
+      document.getElementById('localVideo').srcObject = stream;
+
+      // Create room
+      const socket = io();
+      socket.emit('host-create-room');
+
+      socket.on('room-created', (data) => {
+        document.getElementById('roomIdDisplay').textContent = data.roomId;
+      });
+
+      socket.on('guest-joined', (guest) => {
+        const viewerList = document.getElementById('viewerList');
+        const viewerItem = document.createElement('div');
+        viewerItem.className = 'viewer-item';
+        viewerItem.innerHTML = `
+          <img src="https://i.pravatar.cc/50?u=${guest.username}" alt="${guest.username}">
+          <span>${guest.username}</span>
+        `;
+        viewerList.appendChild(viewerItem);
+        updateViewerCount();
+      });
+
+      // Chat functionality
+      document.getElementById('sendMessage').addEventListener('click', sendMessage);
+      document.getElementById('messageInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+      });
+
+      function sendMessage() {
+        const message = document.getElementById('messageInput').value.trim();
+        if (message) {
+          socket.emit('send-chat-message', { message });
+          document.getElementById('messageInput').value = '';
+        }
+      }
+
+      function updateViewerCount() {
+        const count = document.querySelectorAll('.viewer-item').length;
+        document.getElementById('viewerCount').textContent = count;
+        document.getElementById('viewerCountSide').textContent = count;
+      }
+    }
+  </script>
+</body>
+</html>

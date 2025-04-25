@@ -1,0 +1,245 @@
+/* Host Page Styles */
+:root {
+  --primary: #FF2D55;
+  --secondary: #5856D6;
+  --dark: #1E1E1E;
+  --light: #F5F5F7;
+  --text: #333;
+  --text-light: #888;
+}
+
+.host-container {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100vh;
+  background-color: var(--light);
+  font-family: 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Header */
+.host-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background-color: white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  z-index: 100;
+}
+
+.back-button {
+  color: var(--dark);
+  font-size: 1.2rem;
+  text-decoration: none;
+}
+
+.room-info {
+  display: flex;
+  gap: 20px;
+  font-size: 0.9rem;
+}
+
+.room-info span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-danger {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+}
+
+/* Main Content */
+.host-main {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 15px;
+  padding: 15px;
+  height: calc(100vh - 60px);
+}
+
+.video-container {
+  position: relative;
+  background-color: black;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+#localVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video-controls {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 15px;
+}
+
+.video-controls button {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  background-color: rgba(255,255,255,0.2);
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.video-controls button:hover {
+  background-color: rgba(255,255,255,0.4);
+}
+
+/* Chat Panel */
+.chat-panel {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.chat-header {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.chat-messages {
+  padding: 15px;
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+.message {
+  margin-bottom: 15px;
+}
+
+.message-user {
+  font-weight: 600;
+  color: var(--primary);
+  margin-right: 8px;
+}
+
+.chat-input {
+  display: flex;
+  padding: 15px;
+  border-top: 1px solid #eee;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  outline: none;
+}
+
+.chat-input button {
+  margin-left: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background-color: var(--primary);
+  color: white;
+  cursor: pointer;
+}
+
+/* Viewer Panel */
+.viewer-panel {
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.viewer-header {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.viewer-list {
+  padding: 15px;
+  overflow-y: auto;
+  max-height: 300px;
+}
+
+.viewer-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.viewer-item img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Gift Panel */
+.gift-panel {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 250px;
+  background-color: white;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  z-index: 100;
+}
+
+.gifts-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.gift-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.gift-item i {
+  color: var(--primary);
+  font-size: 1.2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .host-main {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+  }
+  
+  .video-container {
+    height: 50vh;
+  }
+}
