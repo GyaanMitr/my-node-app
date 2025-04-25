@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | VideoConnect</title>
+    <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="profile-container">
+        <!-- Header -->
+        <header class="profile-header">
+            <a href="/" class="back-button"><i class="fas fa-arrow-left"></i></a>
+            <h1>My Profile</h1>
+            <div class="header-actions">
+                <button id="darkModeToggle"><i class="fas fa-moon"></i></button>
+                <button id="editProfile"><i class="fas fa-pencil-alt"></i></button>
+            </div>
+        </header>
+
+        <!-- Profile Card -->
+        <section class="profile-card">
+            <div class="profile-banner"></div>
+            <div class="profile-info">
+                <div class="avatar-container">
+                    <img src="https://i.pravatar.cc/150?u=user123" alt="Profile" class="profile-avatar" id="profileAvatar">
+                    <button class="avatar-edit"><i class="fas fa-camera"></i></button>
+                </div>
+                <h2 id="profileName">Alex Johnson</h2>
+                <p id="profileUsername">@alexj</p>
+                <div class="profile-stats">
+                    <div class="stat">
+                        <span class="stat-value">1.2K</span>
+                        <span class="stat-label">Followers</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">356</span>
+                        <span class="stat-label">Following</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">45</span>
+                        <span class="stat-label">Broadcasts</span>
+                    </div>
+                </div>
+                <button class="profile-action" id="upgradeBtn">
+                    <i class="fas fa-crown"></i> Upgrade to VIP
+                </button>
+            </div>
+        </section>
+
+        <!-- Profile Navigation -->
+        <nav class="profile-nav">
+            <button class="nav-item active" data-section="about">About</button>
+            <button class="nav-item" data-section="broadcasts">Broadcasts</button>
+            <button class="nav-item" data-section="gifts">Gifts</button>
+            <button class="nav-item" data-section="wallet">Wallet</button>
+        </nav>
+
+        <!-- Profile Sections -->
+        <section class="profile-content">
+            <!-- About Section -->
+            <div class="content-section active" id="aboutSection">
+                <div class="about-item">
+                    <i class="fas fa-user"></i>
+                    <div>
+                        <h3>Bio</h3>
+                        <p id="profileBio">Live streamer and content creator. Love gaming and chatting with new people!</p>
+                    </div>
+                </div>
+                <div class="about-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div>
+                        <h3>Location</h3>
+                        <p id="profileLocation">Los Angeles, CA</p>
+                    </div>
+                </div>
+                <div class="about-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <div>
+                        <h3>Member Since</h3>
+                        <p id="joinDate">January 2022</p>
+                    </div>
+                </div>
+                <div class="about-item">
+                    <i class="fas fa-share-alt"></i>
+                    <div>
+                        <h3>Social Connections</h3>
+                        <div class="social-connections">
+                            <button class="social-btn" data-platform="instagram">
+                                <i class="fab fa-instagram"></i> Connect
+                            </button>
+                            <button class="social-btn" data-platform="twitter">
+                                <i class="fab fa-twitter"></i> Connect
+                            </button>
+                            <button class="social-btn" data-platform="youtube">
+                                <i class="fab fa-youtube"></i> Connect
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Broadcasts Section -->
+            <div class="content-section" id="broadcastsSection">
+                <div class="section-actions">
+                    <button id="sortBroadcasts">Sort by Date <i class="fas fa-sort-down"></i></button>
+                    <div class="view-options">
+                        <button class="view-option active" data-view="grid"><i class="fas fa-th"></i></button>
+                        <button class="view-option" data-view="list"><i class="fas fa-list"></i></button>
+                    </div>
+                </div>
+                <div class="broadcast-grid">
+                    <!-- Broadcast items will be loaded here -->
+                </div>
+                <button id="loadMoreBroadcasts" class="load-more">Load More</button>
+            </div>
+
+            <!-- Gifts Section -->
+            <div class="content-section" id="giftsSection">
+                <div class="gifts-container">
+                    <!-- Gift items will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Wallet Section -->
+            <div class="content-section" id="walletSection">
+                <div class="wallet-mini">
+                    <div class="wallet-balance">
+                        <span>Your Balance</span>
+                        <h3>2,450 <small>coins</small></h3>
+                    </div>
+                    <a href="/wallet" class="wallet-action">View Wallet</a>
+                </div>
+                <div class="recent-transactions">
+                    <h4>Recent Transactions</h4>
+                    <!-- Transactions will be loaded here -->
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="profile-modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Profile</h3>
+                <button id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label for="editName">Display Name</label>
+                        <input type="text" id="editName" value="Alex Johnson">
+                    </div>
+                    <div class="form-group">
+                        <label for="editUsername">Username</label>
+                        <input type="text" id="editUsername" value="@alexj">
+                    </div>
+                    <div class="form-group">
+                        <label for="editBio">Bio</label>
+                        <textarea id="editBio">Live streamer and content creator. Love gaming and chatting with new people!</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="editLocation">Location</label>
+                        <input type="text" id="editLocation" value="Los Angeles, CA">
+                    </div>
+                    <button type="submit" class="save-btn">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/profile.js"></script>
+</body>
+</html>

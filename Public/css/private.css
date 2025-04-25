@@ -1,0 +1,264 @@
+/* Private Call Page Styles */
+:root {
+  --primary-color: #FF2D55;
+  --secondary-color: #5856D6;
+  --dark-color: #1E1E1E;
+  --light-color: #F5F5F5;
+  --text-color: #333;
+  --danger-color: #FF3B30;
+  --success-color: #34C759;
+}
+
+.private-container {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100vh;
+  background-color: var(--dark-color);
+  color: white;
+}
+
+/* Header */
+.private-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+}
+
+.call-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.call-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary-color);
+}
+
+.call-username {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.call-status {
+  font-size: 0.8rem;
+  color: #aaa;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.call-status .indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--success-color);
+}
+
+.call-timer {
+  font-family: monospace;
+}
+
+.call-actions {
+  display: flex;
+  gap: 15px;
+}
+
+/* Video Area */
+.video-area {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 100%;
+}
+
+.remote-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background-color: #000;
+}
+
+.local-video {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 120px;
+  height: 160px;
+  border-radius: 8px;
+  border: 2px solid white;
+  object-fit: cover;
+  background-color: #000;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+}
+
+/* Call Controls */
+.call-controls {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.control-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: grid;
+  place-items: center;
+}
+
+.control-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.control-btn.active {
+  background-color: white;
+  color: var(--primary-color);
+}
+
+.control-btn.end-call {
+  background-color: var(--danger-color);
+  width: 60px;
+  height: 60px;
+  font-size: 1.5rem;
+}
+
+.control-btn.end-call:hover {
+  background-color: #ff1a1a;
+}
+
+/* Gift Panel */
+.gift-panel {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 20px;
+  padding: 15px;
+  display: flex;
+  gap: 15px;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.gift-panel.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.gift-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.gift-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.gift-icon {
+  font-size: 1.8rem;
+  color: var(--primary-color);
+}
+
+.gift-price {
+  font-size: 0.8rem;
+  color: var(--success-color);
+  font-weight: 600;
+}
+
+/* Effects */
+.heart-effect {
+  position: absolute;
+  font-size: 2rem;
+  color: var(--primary-color);
+  animation: float-up 3s ease-in-out forwards;
+  pointer-events: none;
+  z-index: 50;
+}
+
+@keyframes float-up {
+  0% {
+    transform: translateY(0) scale(0.5);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .local-video {
+    width: 90px;
+    height: 120px;
+  }
+  
+  .call-controls {
+    gap: 15px;
+    padding: 15px;
+  }
+  
+  .control-btn {
+    width: 45px;
+    height: 45px;
+    font-size: 1rem;
+  }
+  
+  .control-btn.end-call {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .private-header {
+    padding: 10px 15px;
+  }
+  
+  .call-avatar {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .local-video {
+    width: 80px;
+    height: 100px;
+    bottom: 15px;
+    right: 15px;
+  }
+  
+  .gift-panel {
+    bottom: 70px;
+    padding: 10px;
+    gap: 10px;
+  }
+  
+  .gift-icon {
+    font-size: 1.5rem;
+  }
+}

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discover | VideoConnect</title>
+    <link rel="stylesheet" href="css/discover.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="discover-container">
+        <!-- Header -->
+        <header class="discover-header">
+            <div class="logo">
+                <i class="fas fa-video"></i>
+                <span>VideoConnect</span>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Search creators, tags...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+            <nav class="nav-links">
+                <a href="/"><i class="fas fa-home"></i></a>
+                <a href="#" class="active"><i class="fas fa-compass"></i></a>
+                <a href="#"><i class="fas fa-wallet"></i></a>
+                <a href="#"><i class="fas fa-user"></i></a>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="discover-main">
+            <!-- Categories -->
+            <section class="categories">
+                <button class="category active">All</button>
+                <button class="category">Trending</button>
+                <button class="category">Music</button>
+                <button class="category">Gaming</button>
+                <button class="category">Dance</button>
+                <button class="category">Just Chatting</button>
+            </section>
+
+            <!-- Live Rooms Grid -->
+            <section class="live-rooms">
+                <div class="room-card">
+                    <div class="room-thumbnail">
+                        <img src="images/room1.jpg" alt="Live Room">
+                        <div class="live-badge">LIVE</div>
+                        <div class="viewer-count"><i class="fas fa-users"></i> 1.2K</div>
+                    </div>
+                    <div class="room-info">
+                        <img src="https://i.pravatar.cc/50?u=user1" alt="Host" class="host-avatar">
+                        <div class="room-details">
+                            <h3>Late Night Chat</h3>
+                            <p>@JessicaStreams</p>
+                            <span class="tags">#chat #fun</span>
+                        </div>
+                        <button class="join-btn">Join</button>
+                    </div>
+                </div>
+
+                <!-- Additional room cards (repeat as needed) -->
+                <div class="room-card">
+                    <div class="room-thumbnail">
+                        <img src="images/room2.jpg" alt="Live Room">
+                        <div class="live-badge">LIVE</div>
+                        <div class="viewer-count"><i class="fas fa-users"></i> 845</div>
+                    </div>
+                    <div class="room-info">
+                        <img src="https://i.pravatar.cc/50?u=user2" alt="Host" class="host-avatar">
+                        <div class="room-details">
+                            <h3>Music Party</h3>
+                            <p>@DJ_Alex</p>
+                            <span class="tags">#music #party</span>
+                        </div>
+                        <button class="join-btn">Join</button>
+                    </div>
+                </div>
+
+                <!-- Add 4-6 more room cards with different content -->
+            </section>
+
+            <!-- Recommended Section -->
+            <section class="recommended">
+                <h2>Recommended For You</h2>
+                <div class="recommended-rooms">
+                    <!-- Similar room cards but with "recommended" styling -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/discover.js"></script>
+</body>
+</html>

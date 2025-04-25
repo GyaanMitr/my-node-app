@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Call | VideoConnect</title>
+    <link rel="stylesheet" href="css/private.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Additional styles for private call page */
+        .notification {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            z-index: 1000;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+        
+        .notification.fade-out {
+            opacity: 0;
+        }
+        
+        .gift-item {
+            padding: 10px;
+            margin: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .gift-item:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .gift-item i {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="private-container">
+        <!-- Call Header -->
+        <header class="private-header">
+            <div class="call-info">
+                <img id="callAvatar" src="https://via.placeholder.com/50" alt="Caller" class="call-avatar">
+                <div>
+                    <div id="callUsername" class="call-username">Connecting...</div>
+                    <div class="call-status">
+                        <span class="indicator"></span>
+                        <span id="callStatus">Connecting</span>
+                        <span id="callTimer" class="call-timer">00:00</span>
+                    </div>
+                </div>
+            </div>
+            <div class="call-actions">
+                <button id="sendGift" class="control-btn">
+                    <i class="fas fa-gift"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Video Area -->
+        <main class="video-area">
+            <video id="remoteVideo" autoplay playsinline></video>
+            <video id="localVideo" autoplay playsinline muted></video>
+        </main>
+
+        <!-- Call Controls -->
+        <footer class="call-controls">
+            <button id="toggleVideo" class="control-btn">
+                <i class="fas fa-video"></i>
+            </button>
+            <button id="toggleMic" class="control-btn">
+                <i class="fas fa-microphone"></i>
+            </button>
+            <button id="toggleBeauty" class="control-btn">
+                <i class="fas fa-magic"></i>
+            </button>
+            <button id="endCall" class="control-btn end-call">
+                <i class="fas fa-phone-slash"></i>
+            </button>
+        </footer>
+
+        <!-- Gift Panel -->
+        <div class="gift-panel">
+            <h3>Send a Gift</h3>
+            <div class="gifts-container" id="giftsContainer">
+                <!-- Gifts will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/private.js"></script>
+</body>
+</html>
