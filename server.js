@@ -14,11 +14,14 @@ const io = socketIO(server);
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
 // Configuration
-const JWT_SECRET = 'your_secure_jwt_secret_here'; // Use env var in production
+const JWT_SECRET = process.env.JWT_SECRET || 'your_secure_jwt_secret_here'; // Use env var in production
 const PORT = process.env.PORT || 3000;
+
+// Check if public directory exists and serve static files if it does
+const publicPath = path.join(__dirname, 'public');
+app.use(express.static(publicPath));  // Serve static files from the 'public' folder
 
 // Mock database (replace with MongoDB/PostgreSQL later)
 const users = [];
@@ -97,26 +100,42 @@ app.get('/api/auth/me', authenticateUser, (req, res) => {
   res.json({ user: req.user });
 });
 
-// Protected Routes
-app.get('/host.html', authenticateUser, (req, res) => {
-  if (!req.user.isHost) return res.redirect('/guest.html');
-  res.sendFile(path.join(__dirname, 'public', 'host.html'));
+// Protected Routes - Modified to handle missing files
+app.get('/host', authenticateUser, (req, res) => {
+  if (!req.user.isHost) return res.redirect('/guest');
+  try {
+    res.sendFile(path.join(publicPath, 'host.html'));
+  } catch (err) {
+    res.status(404).json({ error: 'Host interface not available' });
+  }
 });
 
-app.get('/guest.html', authenticateUser, (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'guest.html'));
+app.get('/guest', authenticateUser, (req, res) => {
+  try {
+    res.sendFile(path.join(publicPath, 'guest.html'));
+  } catch (err) {
+    res.status(404).json({ error: 'Guest interface not available' });
+  }
 });
 
-// Public Routes
+// Public Routes - Modified to handle missing files
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  try {
+    res.sendFile(path.join(publicPath, 'index.html'));
+  } catch (err) {
+    res.status(404).send('Welcome to the application. The main interface is currently unavailable.');
+  }
 });
 
 app.get('/discover', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'discover.html'));
+  try {
+    res.sendFile(path.join(publicPath, 'discover.html'));
+  } catch (err) {
+    res.status(404).json({ error: 'Discover page not available' });
+  }
 });
 
-// Socket.IO Logic
+// Socket.IO Logic (unchanged)
 io.on('connection', (socket) => {
   console.log('New connection:', socket.id);
 
