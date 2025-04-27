@@ -88,6 +88,11 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something broke!');
 });
 
+// Make sure you have this route
+app.get('/discover', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'discover.html'));
+});
+
 // Start Server
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
