@@ -3,12 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NanuLive | Live Video Chat</title>
-  <!-- Using CDN for Font Awesome -->
+  <title>NanuLive | Discover Live Video Streams</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Inline CSS to prevent missing file issues -->
   <style>
-    /* Base Styles */
+    :root {
+      --primary: #FF2D55;
+      --secondary: #6E00FF;
+      --dark: #1A1A1A;
+      --light: #FFFFFF;
+      --gray: #F5F5F5;
+      --text-light: #666666;
+    }
+    
     * {
       box-sizing: border-box;
       margin: 0;
@@ -16,10 +22,10 @@
     }
     
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       line-height: 1.6;
-      color: #333;
-      background-color: #f5f5f5;
+      color: var(--dark);
+      background-color: var(--gray);
     }
     
     .app-container {
@@ -30,540 +36,1229 @@
     
     /* Header Styles */
     .app-header {
-      background: #FF2D55;
-      color: white;
+      background: var(--primary);
+      color: var(--light);
       padding: 1rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
     
     .logo {
       display: flex;
       align-items: center;
       font-size: 1.5rem;
-      font-weight: bold;
-    }
-    
-    .logo i {
-      margin-right: 0.5rem;
+      font-weight: 700;
+      gap: 0.5rem;
     }
     
     .nav-links {
       display: flex;
-      gap: 1.5rem;
+      gap: 0.75rem;
     }
     
-    .nav-links a {
-      color: white;
+    .nav-btn {
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
       text-decoration: none;
+    }
+    
+    .login-btn {
+      color: var(--light);
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    .signup-btn {
+      color: var(--primary);
+      background: var(--light);
+      border: 1px solid transparent;
+    }
+    
+    .nav-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    /* Filter Bar */
+    .filter-bar {
+      background: var(--light);
+      padding: 1rem;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+      position: sticky;
+      top: 68px;
+      z-index: 999;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    
+    .search-container {
+      flex: 1;
+      min-width: 250px;
+      position: relative;
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: 0.8rem 1rem 0.8rem 2.8rem;
+      border: 1px solid #e0e0e0;
+      border-radius: 30px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+    
+    .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(255,45,85,0.1);
+    }
+    
+    .search-icon {
+      position: absolute;
+      left: 1.2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+    }
+    
+    .filter-tag {
+      display: inline-flex;
+      align-items: center;
+      background: var(--gray);
+      padding: 0.6rem 1.1rem;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      height: 40px;
+    }
+    
+    .filter-tag:hover {
+      background: #e5e5e5;
+    }
+    
+    .filter-tag.active {
+      background: var(--primary);
+      color: var(--light);
+    }
+    
+    .filter-tag i {
+      margin-left: 0.5rem;
+      font-size: 0.7rem;
+      transition: transform 0.2s ease;
+    }
+    
+    .filter-group {
+      position: relative;
+    }
+    
+    .filter-group.active .filter-tag i {
+      transform: rotate(180deg);
+    }
+    
+    .filter-dropdown {
+      position: absolute;
+      top: calc(100% + 5px);
+      left: 0;
+      background: var(--light);
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      padding: 0.8rem 0;
+      min-width: 220px;
+      display: none;
+      z-index: 1001;
+      max-height: 65vh;
+      overflow-y: auto;
+    }
+    
+    .filter-group.active .filter-dropdown {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+    
+    .filter-option {
+      padding: 0.7rem 1.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      transition: all 0.1s ease;
+    }
+    
+    .filter-option:hover {
+      background: rgba(255,45,85,0.05);
+      color: var(--primary);
+    }
+    
+    .filter-option i {
+      width: 18px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: transparent;
+    }
+    
+    .filter-option.active i {
+      color: var(--primary);
+    }
+    
+    /* Featured Section */
+    .featured-section {
+      padding: 2.5rem 1.5rem 1.5rem;
+      max-width: 1500px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.8rem;
+    }
+    
+    .section-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--primary);
+      position: relative;
+      padding-left: 1.2rem;
+    }
+    
+    .section-title:before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 70%;
+      width: 5px;
+      background: var(--primary);
+      border-radius: 5px;
+    }
+    
+    .view-all {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+    }
+    
+    .view-all:hover {
+      gap: 0.7rem;
+    }
+    
+    .featured-rooms {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.8rem;
+    }
+    
+    .featured-room {
+      background: var(--light);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .featured-room:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+    }
+    
+    .featured-thumbnail {
+      position: relative;
+      height: 200px;
+      overflow: hidden;
+    }
+    
+    .featured-thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    
+    .featured-room:hover .featured-thumbnail img {
+      transform: scale(1.05);
+    }
+    
+    .featured-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: var(--secondary);
+      color: var(--light);
+      padding: 0.3rem 0.9rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      z-index: 2;
+    }
+    
+    .viewer-count {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      background: rgba(0,0,0,0.7);
+      color: var(--light);
+      padding: 0.3rem 0.7rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      z-index: 2;
+    }
+    
+    .featured-info {
+      padding: 1.5rem;
+    }
+    
+    .featured-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .featured-host {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+    }
+    
+    .featured-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--primary);
+      flex-shrink: 0;
+    }
+    
+    .featured-host-info {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .featured-host-name {
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .featured-stats {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: var(--text-light);
+    }
+    
+    .featured-stats span {
       display: flex;
       align-items: center;
       gap: 0.3rem;
     }
     
-    /* Hero Section */
-    .hero {
+    /* All Rooms Section */
+    .discover-container {
+      padding: 1.5rem;
+      max-width: 1500px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    
+    .rooms-header {
       display: flex;
-      flex: 1;
-      padding: 2rem;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.8rem;
     }
     
-    .hero-content {
-      max-width: 50%;
+    .rooms-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--dark);
+      position: relative;
+      padding-left: 1.2rem;
     }
     
-    .hero h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      color: #FF2D55;
-    }
-    
-    .hero p {
-      font-size: 1.1rem;
-      margin-bottom: 2rem;
-      color: #666;
-    }
-    
-    .action-buttons {
-      display: flex;
-      gap: 1rem;
-    }
-    
-    .btn {
-      padding: 0.75rem 1.5rem;
+    .rooms-title:before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 70%;
+      width: 5px;
+      background: var(--dark);
       border-radius: 5px;
+    }
+    
+    .rooms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.8rem;
+    }
+    
+    .room-card {
+      background: var(--light);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+    }
+    
+    .room-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+    
+    .room-thumbnail {
+      position: relative;
+      height: 160px;
+      overflow: hidden;
+    }
+    
+    .room-thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    
+    .room-card:hover .room-thumbnail img {
+      transform: scale(1.05);
+    }
+    
+    .room-info {
+      padding: 1.2rem;
+    }
+    
+    .room-title {
+      font-size: 1rem;
       font-weight: 600;
-      cursor: pointer;
-      border: none;
+      margin-bottom: 0.6rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .host-info {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.7rem;
     }
     
-    .btn-primary {
-      background: #FF2D55;
-      color: white;
+    .host-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
     }
     
-    .btn-secondary {
-      background: white;
-      color: #FF2D55;
-      border: 1px solid #FF2D55;
+    .host-name {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     
-    /* Auth Styles */
-    .auth-container {
-      max-width: 400px;
-      margin: 2rem auto;
-      padding: 2rem;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      flex: 1;
+    /* No Results */
+    .no-results {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 4rem 2rem;
     }
     
-    .auth-tabs {
-      display: flex;
+    .no-results i {
+      font-size: 3.5rem;
+      color: var(--primary);
       margin-bottom: 1.5rem;
-      border-bottom: 1px solid #eee;
+      opacity: 0.7;
     }
     
-    .auth-tab {
-      flex: 1;
-      padding: 0.75rem;
-      text-align: center;
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
+    .no-results h3 {
+      font-size: 1.4rem;
+      margin-bottom: 0.8rem;
+      color: var(--dark);
     }
     
-    .auth-tab.active {
-      border-bottom: 2px solid #FF2D55;
-      font-weight: 600;
-    }
-    
-    .auth-form {
-      display: none;
-    }
-    
-    .auth-form.active {
-      display: block;
-    }
-    
-    .form-group {
-      margin-bottom: 1rem;
-    }
-    
-    .form-group label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-    }
-    
-    .form-group input {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-size: 1rem;
-    }
-    
-    .auth-btn {
-      width: 100%;
-      padding: 0.75rem;
-      background: #FF2D55;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 1rem;
-      margin-top: 1rem;
-    }
-    
-    .auth-toggle {
-      text-align: center;
-      margin-top: 1rem;
-      color: #FF2D55;
-      cursor: pointer;
-      font-size: 0.9rem;
-    }
-    
-    /* Logged In Section */
-    .quick-actions {
-      display: flex;
-      gap: 2rem;
-      justify-content: center;
-      padding: 2rem;
-      flex-wrap: wrap;
-    }
-    
-    .action-card {
-      background: white;
-      padding: 2rem;
-      border-radius: 10px;
-      text-align: center;
-      width: 200px;
-      text-decoration: none;
-      color: #333;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-      transition: transform 0.3s;
-    }
-    
-    .action-card:hover {
-      transform: translateY(-5px);
-    }
-    
-    .action-card i {
-      font-size: 2rem;
-      color: #FF2D55;
-      margin-bottom: 1rem;
-    }
-    
-    .action-card h3 {
-      margin-bottom: 0.5rem;
-    }
-    
-    .action-card p {
-      color: #666;
-      font-size: 0.9rem;
+    .no-results p {
+      color: var(--text-light);
+      max-width: 400px;
+      margin: 0 auto;
     }
     
     /* Footer */
     .app-footer {
-      background: #333;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-      margin-top: auto;
+      background: var(--dark);
+      color: var(--light);
+      padding: 2.5rem 1.5rem 1.5rem;
+      margin-top: 3rem;
+    }
+    
+    .footer-content {
+      max-width: 1500px;
+      margin: 0 auto;
     }
     
     .footer-links {
-      display: flex;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
       gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .footer-links h4 {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      color: var(--light);
     }
     
     .footer-links a {
-      color: white;
+      color: #BBBBBB;
       text-decoration: none;
       font-size: 0.9rem;
+      display: block;
+      margin-bottom: 0.6rem;
+      transition: color 0.2s ease;
     }
     
-    /* Error Handling */
-    .error-message {
-      color: #ff2d55;
-      font-size: 0.9rem;
-      margin-top: 0.5rem;
-      display: none;
+    .footer-links a:hover {
+      color: var(--light);
     }
     
-    .input-error {
-      border-color: #ff2d55 !important;
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .copyright {
+      font-size: 0.85rem;
+      color: #999999;
+    }
+    
+    .social-links {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .social-links a {
+      color: #BBBBBB;
+      font-size: 1.1rem;
+      transition: color 0.2s ease;
+    }
+    
+    .social-links a:hover {
+      color: var(--light);
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     
     /* Responsive */
+    @media (max-width: 1024px) {
+      .featured-rooms {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      }
+    }
+    
     @media (max-width: 768px) {
-      .hero {
-        flex-direction: column;
-        text-align: center;
+      .filter-bar {
+        top: 64px;
+        padding: 0.8rem;
+        gap: 0.8rem;
       }
       
-      .hero-content {
-        max-width: 100%;
-        margin-bottom: 2rem;
+      .search-container {
+        min-width: 100%;
+        order: -1;
       }
       
-      .action-buttons {
-        justify-content: center;
+      .nav-links {
+        gap: 0.5rem;
+      }
+      
+      .nav-btn {
+        padding: 0.5rem 0.9rem;
+        font-size: 0.9rem;
+      }
+      
+      .featured-section,
+      .discover-container {
+        padding: 1.5rem 1rem;
+      }
+      
+      .section-title,
+      .rooms-title {
+        font-size: 1.4rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .app-header {
+        padding: 0.8rem;
+      }
+      
+      .logo {
+        font-size: 1.3rem;
+      }
+      
+      .filter-tag {
+        padding: 0.5rem 0.9rem;
+        font-size: 0.85rem;
+      }
+      
+      .featured-thumbnail {
+        height: 180px;
+      }
+      
+      .featured-info {
+        padding: 1.2rem;
+      }
+      
+      .footer-links {
+        grid-template-columns: 1fr 1fr;
       }
     }
   </style>
 </head>
 <body>
   <div class="app-container">
-    <!-- Header -->
+    <!-- Header with Login/Signup buttons -->
     <header class="app-header">
       <div class="logo">
         <i class="fas fa-video"></i>
         <span>NanuLive</span>
       </div>
       <nav class="nav-links">
-        <a href="/discover"><i class="fas fa-compass"></i> Discover</a>
-        <a href="#" id="walletLink"><i class="fas fa-wallet"></i> <span id="walletBalance">0</span> coins</a>
-        <a href="#" id="profileLink"><i class="fas fa-user"></i> Profile</a>
+        <a href="#" class="nav-btn login-btn">Login</a>
+        <a href="#" class="nav-btn signup-btn">Sign Up</a>
       </nav>
     </header>
 
-    <!-- Hero Section (Shows when logged out) -->
-    <section class="hero" id="heroSection">
-      <div class="hero-content">
-        <h1>Connect Through Video</h1>
-        <p>Meet new people, make friends, and have fun through live video chats</p>
-        <div class="action-buttons">
-          <button id="showHostAuth" class="btn btn-primary">
-            <i class="fas fa-broadcast-tower"></i> Start Broadcasting
-          </button>
-          <button id="showGuestAuth" class="btn btn-secondary">
-            <i class="fas fa-users"></i> Join Rooms
-          </button>
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="search-container">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" class="search-input" placeholder="Search streams..." id="searchInput">
+      </div>
+      
+      <div class="filter-group" id="genderFilterGroup">
+        <div class="filter-tag" id="genderFilterTag">
+          <span>All Genders</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="filter-dropdown" id="genderFilter">
+          <div class="filter-option active" data-value="">
+            <i class="fas fa-check"></i> All Genders
+          </div>
+          <div class="filter-option" data-value="male">
+            <i class="fas fa-check"></i> Male
+          </div>
+          <div class="filter-option" data-value="female">
+            <i class="fas fa-check"></i> Female
+          </div>
+          <div class="filter-option" data-value="other">
+            <i class="fas fa-check"></i> Other
+          </div>
         </div>
       </div>
-      <div class="hero-image">
-        <!-- Placeholder for illustration -->
-        <div style="width: 300px; height: 200px; background: #eee; display: flex; align-items: center; justify-content: center;">
-          <i class="fas fa-video" style="font-size: 3rem; color: #ccc;"></i>
+      
+      <div class="filter-group" id="regionFilterGroup">
+        <div class="filter-tag" id="regionFilterTag">
+          <span>All Regions</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="filter-dropdown" id="regionFilter">
+          <div class="filter-option active" data-value="">
+            <i class="fas fa-check"></i> All Regions
+          </div>
+          <div class="filter-option" data-value="north_america">
+            <i class="fas fa-check"></i> North America
+          </div>
+          <div class="filter-option" data-value="south_america">
+            <i class="fas fa-check"></i> South America
+          </div>
+          <div class="filter-option" data-value="europe">
+            <i class="fas fa-check"></i> Europe
+          </div>
+          <div class="filter-option" data-value="asia">
+            <i class="fas fa-check"></i> Asia
+          </div>
         </div>
       </div>
-    </section>
+      
+      <div class="filter-group" id="languageFilterGroup">
+        <div class="filter-tag" id="languageFilterTag">
+          <span>All Languages</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="filter-dropdown" id="languageFilter">
+          <div class="filter-option active" data-value="">
+            <i class="fas fa-check"></i> All Languages
+          </div>
+          <div class="filter-option" data-value="english">
+            <i class="fas fa-check"></i> English
+          </div>
+          <div class="filter-option" data-value="spanish">
+            <i class="fas fa-check"></i> Spanish
+          </div>
+          <div class="filter-option" data-value="french">
+            <i class="fas fa-check"></i> French
+          </div>
+          <div class="filter-option" data-value="mandarin">
+            <i class="fas fa-check"></i> Mandarin
+          </div>
+        </div>
+      </div>
+      
+      <div class="filter-group" id="sortFilterGroup">
+        <div class="filter-tag" id="sortFilterTag">
+          <span>Most Popular</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="filter-dropdown" id="sortFilter">
+          <div class="filter-option active" data-value="popular">
+            <i class="fas fa-check"></i> Most Popular
+          </div>
+          <div class="filter-option" data-value="newest">
+            <i class="fas fa-check"></i> Newest
+          </div>
+          <div class="filter-option" data-value="viewers">
+            <i class="fas fa-check"></i> Most Viewers
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <!-- Auth Forms (Hidden by default) -->
-    <section class="auth-container" id="authSection" style="display:none">
-      <div class="auth-tabs">
-        <div class="auth-tab active" data-tab="login">Login</div>
-        <div class="auth-tab" data-tab="register">Register</div>
-      </div>
-
-      <!-- Login Form -->
-      <div class="auth-form active" id="loginForm">
-        <div class="form-group">
-          <label for="loginUsername">Username</label>
-          <input type="text" id="loginUsername" placeholder="Enter your username" required>
-          <div class="error-message" id="loginUsernameError"></div>
-        </div>
-        <div class="form-group">
-          <label for="loginPassword">Password</label>
-          <input type="password" id="loginPassword" placeholder="Enter your password" required>
-          <div class="error-message" id="loginPasswordError"></div>
-        </div>
-        <button class="auth-btn" id="loginBtn">Login</button>
-        <div class="auth-toggle" data-tab="register">Don't have an account? Register</div>
-      </div>
-
-      <!-- Register Form -->
-      <div class="auth-form" id="registerForm">
-        <div class="form-group">
-          <label for="regUsername">Username</label>
-          <input type="text" id="regUsername" placeholder="Choose a username" required>
-          <div class="error-message" id="regUsernameError"></div>
-        </div>
-        <div class="form-group">
-          <label for="regPassword">Password</label>
-          <input type="password" id="regPassword" placeholder="Create a password" required>
-          <div class="error-message" id="regPasswordError"></div>
-        </div>
-        <div class="form-group">
-          <label>
-            <input type="checkbox" id="isHostCheckbox"> Register as Host
-          </label>
-        </div>
-        <button class="auth-btn" id="registerBtn">Register</button>
-        <div class="auth-toggle" data-tab="login">Already have an account? Login</div>
-      </div>
-    </section>
-
-    <!-- Logged In Content (Hidden by default) -->
-    <section id="loggedInSection" style="display:none">
-      <div class="quick-actions">
-        <a href="/host" class="action-card" id="hostAction">
-          <i class="fas fa-broadcast-tower"></i>
-          <h3>Go Live</h3>
-          <p>Start your broadcast</p>
+    <!-- Featured Rooms Section -->
+    <section class="featured-section">
+      <div class="section-header">
+        <h2 class="section-title">Featured Live Streams</h2>
+        <a href="#" class="view-all">
+          View All
+          <i class="fas fa-chevron-right"></i>
         </a>
-        <a href="/discover" class="action-card">
-          <i class="fas fa-compass"></i>
-          <h3>Discover Rooms</h3>
-          <p>Find interesting streams</p>
-        </a>
+      </div>
+      
+      <div class="featured-rooms" id="featuredRooms">
+        <!-- Featured rooms will be inserted here by JavaScript -->
       </div>
     </section>
+
+    <!-- All Rooms Section -->
+    <main class="discover-container">
+      <div class="rooms-header">
+        <h2 class="rooms-title">All Live Streams</h2>
+      </div>
+      
+      <div class="rooms-grid" id="liveRooms">
+        <!-- All rooms will be inserted here by JavaScript -->
+      </div>
+    </main>
 
     <!-- Footer -->
     <footer class="app-footer">
-      <div class="footer-links">
-        <a href="#">Terms</a>
-        <a href="#">Privacy</a>
-        <a href="#">Help</a>
+      <div class="footer-content">
+        <div class="footer-links">
+          <div>
+            <h4>Company</h4>
+            <a href="#">About Us</a>
+            <a href="#">Careers</a>
+            <a href="#">Blog</a>
+            <a href="#">Press</a>
+          </div>
+          <div>
+            <h4>Support</h4>
+            <a href="#">Help Center</a>
+            <a href="#">Safety Center</a>
+            <a href="#">Community Guidelines</a>
+          </div>
+          <div>
+            <h4>Legal</h4>
+            <a href="#">Terms of Service</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Cookie Policy</a>
+          </div>
+          <div>
+            <h4>Features</h4>
+            <a href="#">Live Streaming</a>
+            <a href="#">Video Chat</a>
+            <a href="#">Monetization</a>
+          </div>
+        </div>
+        
+        <div class="footer-bottom">
+          <p class="copyright">© 2023 NanuLive. All rights reserved.</p>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-tiktok"></i></a>
+          </div>
+        </div>
       </div>
     </footer>
   </div>
 
   <script>
-    // Enhanced DOM ready handler
     document.addEventListener('DOMContentLoaded', () => {
-      // Elements
-      const heroSection = document.getElementById('heroSection');
-      const authSection = document.getElementById('authSection');
-      const loggedInSection = document.getElementById('loggedInSection');
-      const walletBalance = document.getElementById('walletBalance');
-      const profileLink = document.getElementById('profileLink');
+      // Enhanced room data with filterable properties
+      const liveRooms = [
+        {
+          id: 'room1',
+          title: 'Late Night Chat & Games',
+          host: 'Jessica',
+          gender: 'female',
+          region: 'north_america',
+          language: 'english',
+          viewers: 3421,
+          thumbnail: 'https://images.unsplash.com/photo-1593508512255-86ab42a8e620?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
+          avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+          createdAt: '2023-05-15T14:30:00Z',
+          featured: true
+        },
+        {
+          id: 'room2',
+          title: 'Music Night Live Performances',
+          host: 'Alex',
+          gender: 'male',
+          region: 'europe',
+          language: 'english',
+          viewers: 2156,
+          thumbnail: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
+          avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+          createdAt: '2023-05-20T19:15:00Z',
+          featured: true
+        },
+        {
+          id: 'room3',
+          title: 'Spanish Conversation Practice',
+          host: 'Carlos',
+          gender: 'male',
+          region: 'south_america',
+          language: 'spanish',
+          viewers: 1897,
+          thumbnail: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
+          avatar: 'https://randomuser.me/api/portraits/men/22.jpg',
+          createdAt: '2023-05-18T10:45:00Z',
+          featured: false
+        },
+        {
+          id: 'room4',
+          title: 'Valorant Pro Gaming Stream',
+          host: 'ProGamer',
+          gender: 'male',
+          region: 'asia',
+          language: 'mandarin',
+          viewers: 5123,
+          thumbnail: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
+          avatar: 'https://randomuser.me/api/portraits/men/65.jpg',
+          createdAt: '2023-05-22T08:20:00Z',
+          featured: true
+        },
+        {
+          id: 'room5',
+          title: 'French Cooking Show Live',
+          host: 'Marie',
+          gender: 'female',
+          region: 'europe',
+          language: 'french',
+          viewers: 1562,
+          thumbnail: 'https://images.unsplash.com/photo-1547592180-85f173990554?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
+          avatar: 'https://randomuser.me/api/portraits/women/33.jpg',
+          createdAt: '2023-05-21T17:30:00Z',
+          featured: false
+        },
+        {
+          id: 'room6',
+          title: 'German Language Learning',
+          host: 'Thomas',
+          gender: 'male',
+          region: 'europe',
+          language: 'german',
+          viewers: 987,
+          thumbnail: 'https://images.unsplash.com/photo-1516387938699-a93567ec168e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
+          avatar: 'https://randomuser.me/api/portraits/men/55.jpg',
+          createdAt: '2023-05-19T13:10:00Z',
+          featured: false
+        },
+        {
+          id: 'room7',
+          title: 'African Music & Culture',
+          host: 'Amina',
+          gender: 'female',
+          region: 'africa',
+          language: 'english',
+          viewers: 2314,
+          thumbnail: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
+          avatar: 'https://randomuser.me/api/portraits/women/25.jpg',
+          createdAt: '2023-05-17T21:00:00Z',
+          featured: true
+        },
+        {
+          id: 'room8',
+          title: 'Australian Travel Q&A',
+          host: 'Jack',
+          gender: 'male',
+          region: 'oceania',
+          language: 'english',
+          viewers: 876,
+          thumbnail: 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
+          avatar: 'https://randomuser.me/api/portraits/men/75.jpg',
+          createdAt: '2023-05-16T11:30:00Z',
+          featured: false
+        },
+        {
+          id: 'room9',
+          title: 'K-Pop Dance Party',
+          host: 'Ji-hyun',
+          gender: 'female',
+          region: 'asia',
+          language: 'korean',
+          viewers: 4321,
+          thumbnail: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
+          avatar: 'https://randomuser.me/api/portraits/women/63.jpg',
+          createdAt: '2023-05-22T15:45:00Z',
+          featured: true
+        },
+        {
+          id: 'room10',
+          title: 'Tech Talk: AI Revolution',
+          host: 'Raj',
+          gender: 'male',
+          region: 'asia',
+          language: 'english',
+          viewers: 1890,
+          thumbnail: 'https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
+          avatar: 'https://randomuser.me/api/portraits/men/43.jpg',
+          createdAt: '2023-05-21T10:15:00Z',
+          featured: false
+        }
+      ];
+
+      // DOM Elements
+      const featuredContainer = document.getElementById('featuredRooms');
+      const roomsContainer = document.getElementById('liveRooms');
+      const searchInput = document.getElementById('searchInput');
       
-      // Check authentication status
-      const checkAuth = async () => {
-        try {
-          const response = await fetch('/api/auth/me', {
-            credentials: 'include'
+      // Filter elements
+      const filterGroups = {
+        gender: {
+          tag: document.getElementById('genderFilterTag'),
+          options: document.querySelectorAll('#genderFilter .filter-option'),
+          group: document.getElementById('genderFilterGroup')
+        },
+        region: {
+          tag: document.getElementById('regionFilterTag'),
+          options: document.querySelectorAll('#regionFilter .filter-option'),
+          group: document.getElementById('regionFilterGroup')
+        },
+        language: {
+          tag: document.getElementById('languageFilterTag'),
+          options: document.querySelectorAll('#languageFilter .filter-option'),
+          group: document.getElementById('languageFilterGroup')
+        },
+        sort: {
+          tag: document.getElementById('sortFilterTag'),
+          options: document.querySelectorAll('#sortFilter .filter-option'),
+          group: document.getElementById('sortFilterGroup')
+        }
+      };
+
+      // Current filters state
+      let currentFilters = {
+        gender: '',
+        region: '',
+        language: '',
+        sort: 'popular',
+        search: ''
+      };
+
+      // Format viewer counts
+      function formatViewers(count) {
+        if (count >= 1000) {
+          return (count / 1000).toFixed(1) + 'k';
+        }
+        return count;
+      }
+
+      // Render featured rooms
+      function renderFeaturedRooms() {
+        featuredContainer.innerHTML = '';
+        
+        const featuredRooms = liveRooms
+          .filter(room => room.featured)
+          .sort((a, b) => b.viewers - a.viewers)
+          .slice(0, 6); // Show max 6 featured rooms
+        
+        if (featuredRooms.length === 0) {
+          featuredContainer.innerHTML = `
+            <div class="no-results" style="grid-column:1/-1">
+              <i class="fas fa-star"></i>
+              <h3>No featured streams available</h3>
+              <p>Check back later for featured live streams</p>
+            </div>
+          `;
+          return;
+        }
+        
+        featuredRooms.forEach(room => {
+          const roomCard = document.createElement('div');
+          roomCard.className = 'featured-room';
+          roomCard.innerHTML = `
+            <div class="featured-thumbnail">
+              <img src="${room.thumbnail}" alt="${room.title}">
+              <div class="featured-badge">Featured</div>
+              <div class="viewer-count">
+                <i class="fas fa-users"></i>
+                ${formatViewers(room.viewers)}
+              </div>
+            </div>
+            <div class="featured-info">
+              <h3 class="featured-title">${room.title}</h3>
+              <div class="featured-host">
+                <img src="${room.avatar}" alt="${room.host}" class="featured-avatar">
+                <div class="featured-host-info">
+                  <div class="featured-host-name">${room.host}</div>
+                  <div class="featured-stats">
+                    <span><i class="fas fa-globe"></i> ${room.region.replace('_', ' ')}</span>
+                    <span><i class="fas fa-language"></i> ${room.language}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+          featuredContainer.appendChild(roomCard);
+        });
+      }
+
+      // Render all rooms based on current filters
+      function renderRooms() {
+        roomsContainer.innerHTML = '';
+        
+        let filteredRooms = [...liveRooms];
+        
+        // Apply filters
+        if (currentFilters.gender) {
+          filteredRooms = filteredRooms.filter(room => room.gender === currentFilters.gender);
+        }
+        
+        if (currentFilters.region) {
+          filteredRooms = filteredRooms.filter(room => room.region === currentFilters.region);
+        }
+        
+        if (currentFilters.language) {
+          filteredRooms = filteredRooms.filter(room => room.language === currentFilters.language);
+        }
+        
+        // Apply search
+        if (currentFilters.search) {
+          filteredRooms = filteredRooms.filter(room => 
+            room.title.toLowerCase().includes(currentFilters.search) || 
+            room.host.toLowerCase().includes(currentFilters.search)
+          );
+        }
+        
+        // Apply sorting
+        switch (currentFilters.sort) {
+          case 'newest':
+            filteredRooms.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            break;
+          case 'viewers':
+            filteredRooms.sort((a, b) => b.viewers - a.viewers);
+            break;
+          default: // popular (default)
+            filteredRooms.sort((a, b) => (b.viewers * 0.7 + new Date(b.createdAt) * 0.3) - 
+                                      (a.viewers * 0.7 + new Date(a.createdAt) * 0.3));
+        }
+        
+        // Exclude featured rooms from main list if they're already shown
+        filteredRooms = filteredRooms.filter(room => !room.featured);
+        
+        if (filteredRooms.length === 0) {
+          roomsContainer.innerHTML = `
+            <div class="no-results">
+              <i class="fas fa-stream"></i>
+              <h3>No live streams found</h3>
+              <p>Try adjusting your filters or search terms</p>
+            </div>
+          `;
+          return;
+        }
+
+        filteredRooms.forEach(room => {
+          const roomCard = document.createElement('div');
+          roomCard.className = 'room-card';
+          roomCard.innerHTML = `
+            <div class="room-thumbnail">
+              <img src="${room.thumbnail}" alt="${room.title}">
+              <div class="viewer-count">
+                <i class="fas fa-users"></i>
+                ${formatViewers(room.viewers)}
+              </div>
+            </div>
+            <div class="room-info">
+              <h3 class="room-title">${room.title}</h3>
+              <div class="host-info">
+                <img src="${room.avatar}" alt="${room.host}" class="host-avatar">
+                <span class="host-name">${room.host}</span>
+              </div>
+            </div>
+          `;
+          roomsContainer.appendChild(roomCard);
+        });
+      }
+
+      // Update filter selection
+      function updateFilter(type, value, displayText) {
+        currentFilters[type] = value;
+        
+        // Update tag display
+        const tagElement = document.getElementById(`${type}FilterTag`);
+        tagElement.querySelector('span').textContent = displayText || `All ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+        
+        // Update active states
+        document.querySelectorAll(`#${type}Filter .filter-option`).forEach(option => {
+          option.classList.remove('active');
+        });
+        
+        const activeOption = document.querySelector(`#${type}Filter .filter-option[data-value="${value}"]`);
+        if (activeOption) {
+          activeOption.classList.add('active');
+        }
+        
+        renderRooms();
+      }
+
+      // Toggle filter dropdowns
+      Object.keys(filterGroups).forEach(filterType => {
+        const group = filterGroups[filterType];
+        
+        group.tag.addEventListener('click', (e) => {
+          e.stopPropagation();
+          document.querySelectorAll('.filter-group').forEach(g => {
+            if (g !== group.group) g.classList.remove('active');
           });
-          
-          if (response.ok) {
-            const { user } = await response.json();
+          group.group.classList.toggle('active');
+        });
+        
+        group.options.forEach(option => {
+          option.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const value = option.dataset.value;
+            const displayText = option.textContent.trim().replace('✓', '').trim();
             
-            if (user) {
-              // User is authenticated
-              heroSection.style.display = 'none';
-              authSection.style.display = 'none';
-              loggedInSection.style.display = 'block';
-              
-              // Update UI based on user role
-              if (user.isHost) {
-                document.getElementById('hostAction').style.display = 'block';
-              } else {
-                document.getElementById('hostAction').style.display = 'none';
-              }
-              
-              // Update profile info
-              profileLink.href = `/profile?user=${user.username}`;
-              walletBalance.textContent = '100'; // Default value
-              
-              return;
+            if (filterType === 'sort') {
+              currentFilters.sort = value;
+              group.tag.querySelector('span').textContent = displayText;
+            } else {
+              currentFilters[filterType] = value;
+              group.tag.querySelector('span').textContent = displayText || `All ${filterType.charAt(0).toUpperCase() + filterType.slice(1)}`;
             }
-          }
-          
-          // Not authenticated
-          heroSection.style.display = 'flex';
-          authSection.style.display = 'none';
-          loggedInSection.style.display = 'none';
-        } catch (error) {
-          console.error('Auth check failed:', error);
-          // Fallback to showing hero section
-          heroSection.style.display = 'flex';
-          authSection.style.display = 'none';
-          loggedInSection.style.display = 'none';
-        }
-      };
-      
-      // Initialize auth check
-      checkAuth();
-      
-      // Show auth forms
-      document.getElementById('showHostAuth')?.addEventListener('click', () => {
-        heroSection.style.display = 'none';
-        authSection.style.display = 'block';
-        document.getElementById('isHostCheckbox').checked = true;
-      });
-      
-      document.getElementById('showGuestAuth')?.addEventListener('click', () => {
-        heroSection.style.display = 'none';
-        authSection.style.display = 'block';
-        document.getElementById('isHostCheckbox').checked = false;
-      });
-      
-      // Tab switching
-      document.querySelectorAll('.auth-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-          // Update active tab
-          document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-          tab.classList.add('active');
-          
-          // Show corresponding form
-          const tabName = tab.dataset.tab;
-          document.querySelectorAll('.auth-form').forEach(form => form.classList.remove('active'));
-          document.getElementById(`${tabName}Form`).classList.add('active');
-        });
-      });
-      
-      // Toggle between login/register
-      document.querySelectorAll('.auth-toggle').forEach(toggle => {
-        toggle.addEventListener('click', () => {
-          document.querySelector(`.auth-tab[data-tab="${toggle.dataset.tab}"]`).click();
-        });
-      });
-      
-      // Form validation
-      const validateForm = (formId) => {
-        let isValid = true;
-        const form = document.getElementById(formId);
-        
-        form.querySelectorAll('input[required]').forEach(input => {
-          const errorId = `${input.id}Error`;
-          const errorElement = document.getElementById(errorId);
-          
-          if (!input.value.trim()) {
-            input.classList.add('input-error');
-            if (errorElement) {
-              errorElement.textContent = 'This field is required';
-              errorElement.style.display = 'block';
-            }
-            isValid = false;
-          } else {
-            input.classList.remove('input-error');
-            if (errorElement) {
-              errorElement.style.display = 'none';
-            }
-          }
-        });
-        
-        return isValid;
-      };
-      
-      // Login handler
-      document.getElementById('loginBtn')?.addEventListener('click', async () => {
-        if (!validateForm('loginForm')) return;
-        
-        try {
-          const response = await fetch('/api/auth/login', {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              username: document.getElementById('loginUsername').value,
-              password: document.getElementById('loginPassword').value
-            })
+            
+            // Update active states
+            group.options.forEach(opt => {
+              opt.classList.remove('active');
+            });
+            option.classList.add('active');
+            
+            renderRooms();
+            group.group.classList.remove('active');
           });
-          
-          if (response.ok) {
-            window.location.reload();
-          } else {
-            const error = await response.json();
-            alert(error.error || 'Login failed');
-          }
-        } catch (error) {
-          alert('Login failed. Please try again.');
-        }
+        });
+      });
+
+      // Close dropdowns when clicking outside
+      document.addEventListener('click', () => {
+        document.querySelectorAll('.filter-group').forEach(group => {
+          group.classList.remove('active');
+        });
+      });
+
+      // Search functionality with debounce
+      let searchTimeout;
+      searchInput.addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          currentFilters.search = e.target.value.toLowerCase();
+          renderRooms();
+        }, 300);
+      });
+
+      // Login/Signup button functionality
+      document.querySelector('.login-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        // In a real app, this would show a login modal or redirect
+        alert('Login form would appear here');
       });
       
-      // Register handler
-      document.getElementById('registerBtn')?.addEventListener('click', async () => {
-        if (!validateForm('registerForm')) return;
-        
-        try {
-          const response = await fetch('/api/auth/register', {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              username: document.getElementById('regUsername').value,
-              password: document.getElementById('regPassword').value,
-              isHost: document.getElementById('isHostCheckbox').checked
-            })
-          });
-          
-          if (response.ok) {
-            window.location.reload();
-          } else {
-            const error = await response.json();
-            alert(error.error || 'Registration failed');
-          }
-        } catch (error) {
-          alert('Registration failed. Please try again.');
-        }
+      document.querySelector('.signup-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        // In a real app, this would show a signup modal or redirect
+        alert('Signup form would appear here');
       });
+
+      // View All link
+      document.querySelector('.view-all').addEventListener('click', (e) => {
+        e.preventDefault();
+        // Reset all filters
+        currentFilters = {
+          gender: '',
+          region: '',
+          language: '',
+          sort: 'popular',
+          search: ''
+        };
+        
+        // Update UI
+        searchInput.value = '';
+        Object.keys(filterGroups).forEach(filterType => {
+          const defaultOption = document.querySelector(`#${filterType}Filter .filter-option[data-value=""]`) || 
+                               document.querySelector(`#${filterType}Filter .filter-option[data-value="popular"]`);
+          if (defaultOption) {
+            defaultOption.click();
+          }
+        });
+        
+        // Scroll to all rooms section
+        document.querySelector('.discover-container').scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+
+      // Initial render
+      renderFeaturedRooms();
+      renderRooms();
     });
   </script>
 </body>
