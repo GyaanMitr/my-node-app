@@ -59,6 +59,7 @@
     .nav-links {
       display: flex;
       gap: 0.75rem;
+      align-items: center;
     }
     
     .nav-btn {
@@ -68,6 +69,10 @@
       font-size: 0.95rem;
       transition: all 0.2s ease;
       text-decoration: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
     
     .login-btn {
@@ -87,6 +92,130 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
     
+    /* Auth Modal */
+    .auth-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .auth-container {
+      background: white;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 400px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .auth-header {
+      display: flex;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .auth-tab {
+      flex: 1;
+      text-align: center;
+      padding: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .auth-tab.active {
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary);
+    }
+    
+    .auth-content {
+      padding: 1.5rem;
+    }
+    
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .form-group label {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    
+    .form-control {
+      padding: 0.8rem 1rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+    }
+    
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(255,45,85,0.1);
+      outline: none;
+    }
+    
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .checkbox-group input {
+      width: auto;
+    }
+    
+    .auth-btn {
+      padding: 0.8rem;
+      border: none;
+      border-radius: 8px;
+      background: var(--primary);
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 0.5rem;
+    }
+    
+    .auth-btn:hover {
+      background: #e61e4d;
+    }
+    
+    .error-message {
+      color: #ff2d55;
+      font-size: 0.8rem;
+      margin-top: 0.2rem;
+      display: none;
+    }
+    
+    .close-modal {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #999;
+      cursor: pointer;
+    }
+    
+    /* Rest of your existing styles... */
     /* Filter Bar */
     .filter-bar {
       background: var(--light);
@@ -648,6 +777,10 @@
       .footer-links {
         grid-template-columns: 1fr 1fr;
       }
+      
+      .auth-container {
+        width: 95%;
+      }
     }
   </style>
 </head>
@@ -660,11 +793,64 @@
         <span>NanuLive</span>
       </div>
       <nav class="nav-links">
-        <a href="#" class="nav-btn login-btn">Login</a>
-        <a href="#" class="nav-btn signup-btn">Sign Up</a>
+        <a href="#" class="nav-btn login-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Login</a>
+        <a href="#" class="nav-btn signup-btn" id="signupBtn"><i class="fas fa-user-plus"></i> Sign Up</a>
       </nav>
     </header>
 
+    <!-- Auth Modal -->
+    <div class="auth-modal" id="authModal">
+      <div class="auth-container">
+        <button class="close-modal" id="closeModal">&times;</button>
+        <div class="auth-header">
+          <div class="auth-tab active" data-tab="login">Login</div>
+          <div class="auth-tab" data-tab="register">Register</div>
+        </div>
+        
+        <div class="auth-content">
+          <!-- Login Form -->
+          <div class="auth-form" id="loginForm">
+            <div class="form-group">
+              <label for="loginUsername">Username</label>
+              <input type="text" id="loginUsername" class="form-control" placeholder="Enter your username">
+              <div class="error-message" id="loginUsernameError"></div>
+            </div>
+            
+            <div class="form-group">
+              <label for="loginPassword">Password</label>
+              <input type="password" id="loginPassword" class="form-control" placeholder="Enter your password">
+              <div class="error-message" id="loginPasswordError"></div>
+            </div>
+            
+            <button type="button" class="auth-btn" id="submitLogin">Login</button>
+          </div>
+          
+          <!-- Register Form -->
+          <div class="auth-form" id="registerForm" style="display: none;">
+            <div class="form-group">
+              <label for="regUsername">Username</label>
+              <input type="text" id="regUsername" class="form-control" placeholder="Choose a username">
+              <div class="error-message" id="regUsernameError"></div>
+            </div>
+            
+            <div class="form-group">
+              <label for="regPassword">Password</label>
+              <input type="password" id="regPassword" class="form-control" placeholder="Create a password">
+              <div class="error-message" id="regPasswordError"></div>
+            </div>
+            
+            <div class="checkbox-group">
+              <input type="checkbox" id="isHostCheckbox">
+              <label for="isHostCheckbox">I want to be a host</label>
+            </div>
+            
+            <button type="button" class="auth-btn" id="submitRegister">Create Account</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rest of your existing HTML... -->
     <!-- Filter Bar -->
     <div class="filter-bar">
       <div class="search-container">
@@ -971,6 +1157,17 @@
       const roomsContainer = document.getElementById('liveRooms');
       const searchInput = document.getElementById('searchInput');
       
+      // Auth elements
+      const authModal = document.getElementById('authModal');
+      const loginBtn = document.getElementById('loginBtn');
+      const signupBtn = document.getElementById('signupBtn');
+      const closeModal = document.getElementById('closeModal');
+      const authTabs = document.querySelectorAll('.auth-tab');
+      const loginForm = document.getElementById('loginForm');
+      const registerForm = document.getElementById('registerForm');
+      const submitLogin = document.getElementById('submitLogin');
+      const submitRegister = document.getElementById('submitRegister');
+      
       // Filter elements
       const filterGroups = {
         gender: {
@@ -1003,6 +1200,227 @@
         sort: 'popular',
         search: ''
       };
+
+      // Auth functions
+      const showAuthModal = (tab = 'login') => {
+        authModal.style.display = 'flex';
+        if (tab === 'login') {
+          authTabs[0].classList.add('active');
+          authTabs[1].classList.remove('active');
+          loginForm.style.display = 'block';
+          registerForm.style.display = 'none';
+        } else {
+          authTabs[1].classList.add('active');
+          authTabs[0].classList.remove('active');
+          loginForm.style.display = 'none';
+          registerForm.style.display = 'block';
+        }
+      };
+
+      const hideAuthModal = () => {
+        authModal.style.display = 'none';
+        // Clear errors
+        document.querySelectorAll('.error-message').forEach(el => {
+          el.style.display = 'none';
+          el.textContent = '';
+        });
+      };
+
+      const handleLogin = async (username, password) => {
+        try {
+          const response = await fetch('http://localhost:3000/api/auth/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password }),
+            credentials: 'include'
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Login failed');
+          }
+
+          const data = await response.json();
+          return data;
+        } catch (error) {
+          console.error('Login error:', error);
+          throw error;
+        }
+      };
+
+      const handleRegister = async (username, password, isHost) => {
+        try {
+          const response = await fetch('http://localhost:3000/api/auth/register', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password, isHost }),
+            credentials: 'include'
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Registration failed');
+          }
+
+          const data = await response.json();
+          return data;
+        } catch (error) {
+          console.error('Registration error:', error);
+          throw error;
+        }
+      };
+
+      const checkAuthState = async () => {
+        try {
+          const response = await fetch('http://localhost:3000/api/auth/me', {
+            credentials: 'include'
+          });
+          
+          if (response.ok) {
+            const { user } = await response.json();
+            updateAuthState(true, user);
+          } else {
+            updateAuthState(false);
+          }
+        } catch (error) {
+          console.error('Auth check failed:', error);
+          updateAuthState(false);
+        }
+      };
+
+      const updateAuthState = (isLoggedIn, userData) => {
+        const navLinks = document.querySelector('.nav-links');
+        
+        if (isLoggedIn) {
+          // Hide auth buttons
+          loginBtn.style.display = 'none';
+          signupBtn.style.display = 'none';
+          
+          // Add profile button
+          if (!document.getElementById('profileBtn')) {
+            const profileBtn = document.createElement('a');
+            profileBtn.id = 'profileBtn';
+            profileBtn.className = 'nav-btn';
+            profileBtn.style.backgroundColor = 'rgba(255,255,255,0.15)';
+            profileBtn.innerHTML = `<i class="fas fa-user"></i> ${userData.username}`;
+            profileBtn.href = '#';
+            navLinks.appendChild(profileBtn);
+            
+            // Add logout button
+            const logoutBtn = document.createElement('a');
+            logoutBtn.className = 'nav-btn';
+            logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i>';
+            logoutBtn.href = '#';
+            logoutBtn.onclick = async (e) => {
+              e.preventDefault();
+              try {
+                await fetch('http://localhost:3000/api/auth/logout', {
+                  credentials: 'include'
+                });
+                updateAuthState(false);
+              } catch (error) {
+                console.error('Logout error:', error);
+              }
+            };
+            navLinks.appendChild(logoutBtn);
+          }
+        } else {
+          // Show auth buttons
+          loginBtn.style.display = 'flex';
+          signupBtn.style.display = 'flex';
+          
+          // Remove profile/logout buttons if they exist
+          const profileBtn = document.getElementById('profileBtn');
+          if (profileBtn) profileBtn.remove();
+          const logoutBtns = document.querySelectorAll('.nav-links a[href="#"]');
+          logoutBtns.forEach(btn => {
+            if (btn.id !== 'loginBtn' && btn.id !== 'signupBtn') btn.remove();
+          });
+        }
+      };
+
+      // Auth event listeners
+      loginBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        showAuthModal('login');
+      });
+
+      signupBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        showAuthModal('register');
+      });
+
+      closeModal.addEventListener('click', hideAuthModal);
+
+      authModal.addEventListener('click', (e) => {
+        if (e.target === authModal) {
+          hideAuthModal();
+        }
+      });
+
+      authTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          authTabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          
+          if (tab.dataset.tab === 'login') {
+            loginForm.style.display = 'block';
+            registerForm.style.display = 'none';
+          } else {
+            loginForm.style.display = 'none';
+            registerForm.style.display = 'block';
+          }
+        });
+      });
+
+      submitLogin.addEventListener('click', async () => {
+        const username = document.getElementById('loginUsername').value;
+        const password = document.getElementById('loginPassword').value;
+
+        try {
+          const result = await handleLogin(username, password);
+          
+          // Update UI after successful login
+          updateAuthState(true, result.user);
+          hideAuthModal();
+          
+          // Show success message
+          alert(`Welcome back, ${result.user.username}!`);
+        } catch (error) {
+          // Show error to user
+          document.getElementById('loginPasswordError').textContent = error.message;
+          document.getElementById('loginPasswordError').style.display = 'block';
+        }
+      });
+
+      submitRegister.addEventListener('click', async () => {
+        const username = document.getElementById('regUsername').value;
+        const password = document.getElementById('regPassword').value;
+        const isHost = document.getElementById('isHostCheckbox').checked;
+
+        try {
+          const result = await handleRegister(username, password, isHost);
+          
+          // Switch to login tab after successful registration
+          authTabs[0].click();
+          
+          // Clear registration form
+          document.getElementById('regUsername').value = '';
+          document.getElementById('regPassword').value = '';
+          document.getElementById('isHostCheckbox').checked = false;
+          
+          // Show success message
+          alert('Registration successful! Please login.');
+        } catch (error) {
+          // Show error to user
+          document.getElementById('regUsernameError').textContent = error.message;
+          document.getElementById('regUsernameError').style.display = 'block';
+        }
+      });
 
       // Format viewer counts
       function formatViewers(count) {
@@ -1215,19 +1633,6 @@
         }, 300);
       });
 
-      // Login/Signup button functionality
-      document.querySelector('.login-btn').addEventListener('click', (e) => {
-        e.preventDefault();
-        // In a real app, this would show a login modal or redirect
-        alert('Login form would appear here');
-      });
-      
-      document.querySelector('.signup-btn').addEventListener('click', (e) => {
-        e.preventDefault();
-        // In a real app, this would show a signup modal or redirect
-        alert('Signup form would appear here');
-      });
-
       // View All link
       document.querySelector('.view-all').addEventListener('click', (e) => {
         e.preventDefault();
@@ -1256,6 +1661,9 @@
         });
       });
 
+      // Check auth state on page load
+      checkAuthState();
+      
       // Initial render
       renderFeaturedRooms();
       renderRooms();
