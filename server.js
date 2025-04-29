@@ -4,7 +4,7 @@ const path = require('path'); // Add this line
 const http = require('http');
 const socketIO = require('socket.io');
 const cors = require('cors');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 
